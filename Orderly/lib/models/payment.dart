@@ -1,5 +1,5 @@
 enum Currency {
-  USD, KHR
+  usd, khr
 }
 class Payment {
   final String id;
@@ -12,12 +12,12 @@ class Payment {
 
   Payment(
     {
-      required this.id, required this.amountPaid,required this.orderTotalUsd, required this.exchangeRate, this.currency = Currency.USD
+      required this.id, required this.amountPaid,required this.orderTotalUsd, required this.exchangeRate, this.currency = Currency.usd
     }
   );
 
   double get totalPay{
-    if(currency == Currency.USD){
+    if(currency == Currency.usd){
       return orderTotalUsd;
     } else {
     return orderTotalUsd * exchangeRate;
