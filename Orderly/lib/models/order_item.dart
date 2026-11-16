@@ -1,20 +1,17 @@
- import 'package:orderly/models/manu_item.dart';
-
-enum ItemStatus  { pending, preparing, served, cancelled}
+ import 'package:orderly/models/menu_item.dart';
 
 class OrderItem {
 
 
   final String id;
-  MenuItem menuItem;
+  final MenuItem menuItem;
 
   final double priceSnapshot;
 
-  String quantity;
+  int quantity;
 
-  ItemStatus status;
 
-  OrderItem({required this.id, required this.menuItem, required this.priceSnapshot, required this.quantity, this.status = ItemStatus.pending});
+  OrderItem({required this.id, required this.menuItem, required this.priceSnapshot, required this.quantity});
 
 
  }
