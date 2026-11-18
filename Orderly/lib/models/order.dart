@@ -21,4 +21,11 @@ class Order {
 
   Order({required this.id, required this.table, this.status = OrderStatus.open, this.payment});
 
+  double get totalAmount {
+    double total = 0.0;
+    for (OrderItem item in items) {
+      total += item.totalPrice;
+    }
+    return total;
+  }
 }
