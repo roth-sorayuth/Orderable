@@ -1,4 +1,6 @@
+ 
 
+import 'package:orderly/services/payment_service.dart';
 import 'package:orderly/services/table_service.dart';
 import 'package:test/test.dart';
 import 'package:orderly/services/order_service.dart';
@@ -7,17 +9,18 @@ import 'package:orderly/models/order.dart';
 import 'package:orderly/models/order_item.dart';
 import 'package:orderly/services/menu_service.dart';
 
-import 'package:orderly/models/menu_item.dart';
+
+
 
 void main() {
   
 
-    test('createOrder creates a new order and updates table status', () {
+    test(' creates a new order ', () {
      
       final orderService = OrderService();
       final TableService tableService = TableService();
-      tableService.addTable('1', 4);
-      final table = tableService.getTable('1')!;
+      tableService.addTable(id: '1', capacity: 4);
+      final table = tableService.getTable(tableId: '1')!;
       
       orderService.createOrder(orderId: 'order1', table: table);
 
@@ -29,8 +32,8 @@ void main() {
      test('createOrder throws exception if table is not available', () {
       final orderService = OrderService();
       final TableService tableService = TableService();
-      tableService.addTable('1', 4, status: TableStatus.occupied);
-      final table = tableService.getTable('1')!;
+      tableService.addTable(id: '1', capacity: 4, status: TableStatus.occupied);
+      final table = tableService.getTable(tableId: '1')!;
 
       expect(() => orderService.createOrder(orderId: 'order1', table: table), throwsException);
      });
@@ -39,8 +42,8 @@ void main() {
     test('createOrder throws exception if order already exists', () {
       final orderService = OrderService();
       final TableService tableService = TableService();
-      tableService.addTable('1', 4);
-      final table = tableService.getTable('1')!;
+      tableService.addTable(id: '1', capacity:  4);
+      final table = tableService.getTable(tableId: '1')!;
       orderService.createOrder(orderId: 'order1', table: table);
 
       expect(() => orderService.createOrder(orderId: 'order1', table: table), throwsException);
@@ -50,8 +53,8 @@ void main() {
     test('cancelOrder updates order status and table status', () {  
       final orderService = OrderService();
       final TableService tableService = TableService();
-      tableService.addTable('1', 4);
-      final table = tableService.getTable('1')!;
+      tableService.addTable(id: '1', capacity: 4);
+      final table = tableService.getTable(tableId: '1')!;
       
       orderService.createOrder(orderId: 'order1', table: table);
       orderService.cancelOrder(orderId: 'order1');
@@ -66,8 +69,8 @@ void main() {
   final tableService = TableService();
   final menuService = MenuService();
 
-  tableService.addTable('1', 4);
-  final table = tableService.getTable('1')!;
+  tableService.addTable(id: '1', capacity: 4);
+  final table = tableService.getTable(tableId: '1')!;
 
   orderService.createOrder(orderId: 'order1', table: table);
 
@@ -87,8 +90,8 @@ test('Remove item from order', () {
   final tableService = TableService();
   final menuService = MenuService();
 
-  tableService.addTable('1', 4);
-  final table = tableService.getTable('1')!;
+  tableService.addTable(id: '1', capacity: 4);
+  final table = tableService.getTable(tableId: '1')!;
 
   orderService.createOrder(orderId: 'order1', table: table);
 
@@ -108,10 +111,11 @@ test('Add unavailable item to order', () {
   final tableService = TableService();
   final menuService = MenuService();
 
-  tableService.addTable('1', 4);
-  final table = tableService.getTable('1')!;
+  tableService.addTable(id: '1', capacity: 4);
+  final table = tableService.getTable(tableId: '1')!;
 
   orderService.createOrder(orderId: 'order1', table: table);
+
 
   menuService.addMenuItem(id: 'item1', name: 'Pizza', price: 10.0, category: 'Food',);
   final item = menuService.getMenuItem(id: 'item1')!;
@@ -122,6 +126,41 @@ test('Add unavailable item to order', () {
   expect(() => orderService.addItemToOrder(orderId: 'order1', item: OrderItem(id: item.id,menuItem: item , priceSnapshot: item.price, quantity: 1)), throwsException);
 
 });
+test('Pay order', () {
+  final orderService = OrderService();
+  final tableService = TableService();
+  final menuService = MenuService();
+  final paymentService = PaymentService();
+
+  tableService.addTable(id: '1', capacity: 4);
+  final table = tableService.getTable(tableId: '1')!;
+
+  orderService.createOrder(orderId: 'order1', table: table);
+
+  menuService.addMenuItem(id: 'item1', name: 'Pizza', price: 10.0, category: 'Food',);
+  final item = menuService.getMenuItem(id: 'item1')!;
+  
+
+
+  orderService.addItemToOrder(orderId: 'order1', item: OrderItem(id: item.id,menuItem: item , priceSnapshot: item.price, quantity: 2));
+
+  final payment=  paymentService.processPayment(paymentId: 'P1', amountPaid: 30, totalOrderPrice: orderService.orders[0].totalAmount);
+ 
+
+
+  orderService.payOrder(orderId: 'order1', payment: payment);
+
+
+final order = orderService.orders[0];
+expect(order.totalAmount, 20.0);
+expect(order.status, OrderStatus.paid);
+expect(order.payment?.amountPaid, 30.0);
+expect(order.payment?.change, 10.0);
+expect(table.status, TableStatus.available);
+  //expect change
+});
+
+
 
 
 

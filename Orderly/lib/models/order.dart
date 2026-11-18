@@ -9,6 +9,7 @@ enum OrderStatus {open, paid, cancelled}
 class Order {
 
   final String id;
+   int discountPercent;
 
   final RestaurantTable table;
 
@@ -19,6 +20,6 @@ class Order {
   Payment? payment;
 
 
-  Order({required this.id, required this.table, this.status = OrderStatus.open, this.payment});
+  Order({required this.id, required this.table, this.status = OrderStatus.open, this.payment, this.discountPercent=0,});
 
 }
