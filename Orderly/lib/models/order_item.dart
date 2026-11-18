@@ -11,7 +11,8 @@ class OrderItem {
   int quantity;
 
 
-  OrderItem({required this.id, required this.menuItem, required this.priceSnapshot, required this.quantity});
+  OrderItem({required this.id, required this.menuItem, required this.priceSnapshot, this.quantity = 1});
 
+  double get totalPrice => priceSnapshot * quantity;
 
  }

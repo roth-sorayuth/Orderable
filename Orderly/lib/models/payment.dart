@@ -1,35 +1,13 @@
-enum Currency {
-  usd, khr
-}
+
 class Payment {
   final String id;
-  Currency currency;
   final double amountPaid;
-  final double exchangeRate;
-  final double orderTotalUsd;
+  double change ;
+
+  Payment({ required this.id, required this.amountPaid, this.change = 0.0});
 
   
 
-  Payment(
-    {
-      required this.id, required this.amountPaid,required this.orderTotalUsd, required this.exchangeRate, this.currency = Currency.usd
-    }
-  );
-
-  double get totalPay{
-    if(currency == Currency.usd){
-      return orderTotalUsd;
-    } else {
-    return orderTotalUsd * exchangeRate;
-  }
-  }
-
-  double get totalPayKhm{
-    return orderTotalUsd*exchangeRate;
-  }
-
-  double get totalPayUsd{
-    return orderTotalUsd;
-  }
+ 
   
 }
